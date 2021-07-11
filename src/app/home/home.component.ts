@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
   selectedCompany: any;
   searching: boolean = false;
   searchFailed: boolean = false;
-  onLockerSelected: any;
+  onLockerSelected: boolean = false;
 
 
 
@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
   distance: string = "0.3";
   totalOpenLockers: number = 0;
   isLoading: boolean = false
-  categoryList:Category[]=[]
+  categoryList: Category[] = []
   lockerCategories: any
 
   localLockerList: Locker[] = [];
@@ -57,6 +57,7 @@ export class HomeComponent implements OnInit {
 
   }
   ngOnInit(): void {
+    this.initForm();
     this.getAllLockers()
     this.getAllLockersCategory()
 
@@ -73,35 +74,35 @@ export class HomeComponent implements OnInit {
 
     this.http.get<Locker[]>(this.GET_ALL_LOCKERS).subscribe(
       (respose: Locker[]) => {
-        console.log(respose)
+        // console.log(respose)
         this.LockerList = respose
         this.localLockerList = this.LockerList;
 
       },
       error => {
-        console.log(error);
+        // console.log(error);
 
       }
     )
   }
 
- getAllLockersCategory(): void {
+  getAllLockersCategory(): void {
 
     this.http.get<Locker[]>(this.GET_ALL_LOCKER_CATEGORY).subscribe(
       (respose: Category[]) => {
-        console.log(respose)
+        // console.log(respose)
         this.categoryList = respose
 
       },
       error => {
-        console.log(error);
+        // console.log(error);
 
       }
     )
   }
 
 
-  searchView(event: any):void {
+  searchView(event: any): void {
     this.localLockerList = this.transform(this.LockerList, event.target.value);
   }
 
@@ -127,9 +128,9 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  filter(value: any):void {
+  filter(value: any): void {
     let selected: string = value;
-    console.log(value);
+    // console.log(value);
 
 
     switch (selected) {
@@ -168,7 +169,7 @@ export class HomeComponent implements OnInit {
 
   }
 
-  rentNow():void {
+  rentNow(): void {
     this.router.navigateByUrl('/rent')
 
   }
@@ -179,6 +180,8 @@ export class HomeComponent implements OnInit {
 
 
   get selectedLockerSearch(): any {
+    this.transform(this.LockerList,this.name)
+
     return this.onLockerSelected;
   }
 
@@ -192,7 +195,7 @@ export class HomeComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
       tap(() => {
-        console.log('------WORKING------');
+        // console.log('------WORKING------');
         this.searching = true;
       }),
       switchMap((term: any) =>
@@ -208,6 +211,7 @@ export class HomeComponent implements OnInit {
     );
 
   persistLockerDetails(value: any) {
+
     sessionStorage.setItem('persistLockerDetails', JSON.stringify(value));
     //   console.log(value)
   }
@@ -217,14 +221,14 @@ export class HomeComponent implements OnInit {
     //Add 'implements OnDestroy' to the class.
     sessionStorage.removeItem('persistLockerDetails');
   }
-
-  formatLockerSearch(item: Locker):string {
+name!:string
+  formatLockerSearch(item: Locker): string {
     if (!!item && !!item.name) {
-      let name = item.name.trim().toUpperCase();
+      this.name = item.name.trim().toUpperCase();
       if (!!item.name) {
-        name += ' [' + item.location.name.trim() + ']';
+        this.name = item.name.trim();
       }
-      return name;
+      return this.name;
     } else return '';
   }
 
@@ -235,13 +239,13 @@ export class HomeComponent implements OnInit {
     return of(this.LockerList).pipe(
       map((locker: Locker[]) => {
         if (locker) {
-          console.log(locker);
+          // console.log(locker);
           // this.persistLockerDetails(locker[0]);
           return this.LockerList.filter((row: Locker) => {
             let locationName: string = row.location.name.toLowerCase();
-            console.log("Location Name: " + locationName);
+            // console.log("Location Name: " + locationName);
 
-            console.log("Actual Location" + row.location.name);
+            // console.log("Actual Location" + row.location.name);
 
 
             return locationName.includes(lockerName.toLowerCase()) ? true : false
@@ -250,7 +254,7 @@ export class HomeComponent implements OnInit {
 
           });
         } else {
-          console.log("Else Return all Locker");
+          // console.log("Else Return all Locker");
 
           return locker;
         }
@@ -261,10 +265,10 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  itemSelected(event: any):void {
+  itemSelected(event: any): void {
     this.selectedCompany = event.item;
     this.persistLockerDetails(event.item);
-    console.log('the item ' + JSON.stringify(event.item));
+    // console.log('the item ' + JSON.stringify(event.item));
 
   }
 

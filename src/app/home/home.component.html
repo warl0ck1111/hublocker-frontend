@@ -40,7 +40,7 @@
           </ng-template>
 
 
-          <input class="search-locker" (keyup)="searchView($event)" type="text" placeholder="Enter City or State"
+          <input class="search-locker" (change)="searchView($event)" type="text" placeholder="Enter City or State"
             [(ngModel)]="selectedLockerSearch" [ngModelOptions]="{standalone: true}" [class.is-invalid]="searchFailed"
             [ngbTypeahead]="searchLockerByLocation" (selectItem)="itemSelected($event)"
             [inputFormatter]="formatLockerSearch" [resultTemplate]="rt" [resultFormatter]="formatLockerSearch"
@@ -69,7 +69,7 @@
 
 <nav class="main-nav">
   <span class="available-lockers">
-    {{totalOpenLockers}} Open lockers Available
+    {{localLockerList.length}} Open lockers Available
   </span>
   <span class="sort-by">
     <label for="sort">Sort By</label>

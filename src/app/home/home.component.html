@@ -1,0 +1,152 @@
+<p>home works!</p>
+<header>
+
+  <div class="header-first-items">
+    <div class="header-logo">
+      <span class="">HUBLOCKER</span>
+      <br>
+      <span><small>BY OCEANGRSMITH</small></span>
+    </div>
+
+  </div>
+  <div class="header-middle-items">
+    <a routerLink="">Home</a>
+    <a routerLink="">Find a Locker</a>
+    <a routerLink="">Size Guide</a>
+    <a routerLink="">Locations</a>
+    <a routerLink="">Help Center</a>
+  </div>
+
+
+  <div class="header-right-items">
+    <a class="" routerLink="">My Account</a>
+    <a class="" routerLink="">080-188-0872</a>
+    <button class="btn-pay-bill">Pay Your Bill</button>
+  </div>
+</header>
+
+<section class="banner">
+  <img src="../assets/img/banner2.jpg" alt="Banner Img">
+  <div class="welcome">
+    <h2 class="find-a-locker">Find a Locker<br></h2>
+    <div class="enter-city">
+      <form [formGroup]="searchLockerForm" (ngSubmit)="onSubmit()">
+        <span>
+
+          <ng-template style="overflow:scroll" class="resultTemplate" #rt let-r="result" let-t="term">
+
+            <i class="fa fa-check-circle-o" style="color: #4CAF50;" *ngIf="r.name">&nbsp;</i>
+            {{ r.name}}
+          </ng-template>
+
+
+          <input class="search-locker" (keyup)="searchView($event)" type="text" placeholder="Enter City or State"
+            [(ngModel)]="selectedLockerSearch" [ngModelOptions]="{standalone: true}" [class.is-invalid]="searchFailed"
+            [ngbTypeahead]="searchLockerByLocation" (selectItem)="itemSelected($event)"
+            [inputFormatter]="formatLockerSearch" [resultTemplate]="rt" [resultFormatter]="formatLockerSearch"
+            [editable]='false'>
+          <small *ngIf="searching" class="form-text text-muted"><span class="spinner-border spinner-border-sm"
+              role="status" aria-hidden="true"></span>&nbsp;
+            Searching...</small>
+          <div class="invalid-feedback" *ngIf="searchFailed">Sorry, No Locker info could not be
+            loaded.
+          </div>
+          <div class="invalid-feedback" *ngIf="lockerNotFound">No Locker Found
+          </div>
+        </span>
+
+      </form>
+      <div class="find-locker-logo">
+        <h3>Find Locker</h3><br>
+        <h5>One Naira For First Rent</h5>
+      </div>
+
+    </div>
+
+
+  </div>
+</section>
+
+<nav class="main-nav">
+  <span class="available-lockers">
+    {{localLockerList.length}} Open lockers Available
+  </span>
+  <span class="sort-by">
+    <label for="sort">Sort By</label>
+    <select class="proximity" name="proximity" id="">
+      <option value="">Closest</option>
+      <option value="">Lowest Price</option>
+    </select>
+  </span>
+</nav>
+
+<main>
+
+  <div class="main left-side ">
+    <ul class="location-image">
+      <li><img src="../assets/img/R.jpg" alt="1st Img">
+        <br><span>{{address}}</span>
+        <br>
+        <span id="checked" class="fa fa-star checked"></span>
+        <span id="checked" class="fa fa-star checked"></span>
+        <span id="checked" class="fa fa-star checked"></span>
+        <span id="checked" class="fa fa-star checked"></span>
+        <span id="checked" class="fa fa-star checked"></span>
+        <br>
+        <span>{{distance}} Miles Away</span>
+      </li>
+
+      <!-- <li><img src="../assets/img/thumb-2.png" alt="2nd Img"></li> -->
+    </ul>
+  </div>
+
+  <div class="main right-side ">
+
+    <div class="featured">
+      <select #target (change)="filter(target.value)" name="featured" id="featured">
+        <option value="">Featured</option>
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+      </select>
+
+      <a class="guide-size-link" href="">View the guide size</a>
+    </div>
+
+
+
+    <div *ngFor="let item of localLockerList | slice
+          : (tablePage - 1) * tablePageSize
+          : (tablePage - 1) * tablePageSize + tablePageSize;
+            let i = index">
+
+      <div class="details">
+        <span>{{item.category.name +' '+ item.dimensions}}</span>
+        <span>{{item.priceDescription}}</span>
+        <span>{{item.promoOffer}}</span>
+        <span>{{item.quantity}}</span>
+        <button class="rent-btn" (click)="rentNow()">Rent Now</button>
+
+
+      </div>
+
+    </div>
+
+    <ngb-pagination *ngIf=" !isLoading && localLockerList.length > 0"  class="d-flex flex-wrap justify-content-center" [(page)]="tablePage" [pageSize]="tablePageSize"
+      [collectionSize]="localLockerList.length" [rotate]="true" [boundaryLinks]="true">
+    </ngb-pagination>
+
+    <ng-container>
+      <div class="spinner-border text-center" *ngIf="isLoading">
+      </div>
+
+      <div *ngIf=" !isLoading && localLockerList.length === 0"
+        class="alert alert-danger text-center alert-dismissible text-center fade show no-record">
+        <strong></strong>No Record.
+        <button type="button" class="close" data-dismiss="alert"></button>
+      </div>
+    </ng-container>
+    <span class="fa fa-plus"> <span>View all lockers at this location</span></span>
+  </div>
+
+</main>
